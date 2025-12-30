@@ -5,15 +5,12 @@ export function notFoundHandler(req, res) {
 }
 
 export function errorHandler(err, req, res, next) {
-  // CORS error (dari cors.js)
   if (err?.message === "CORS_NOT_ALLOWED") {
     return fail(res, 403, "FORBIDDEN", "Origin tidak diizinkan oleh CORS.");
   }
 
-  // Rate limit sudah punya message sendiri, tapi kalau ada error lain:
   const isProd = process.env.NODE_ENV === "production";
 
-  // Default
   if (!isProd) {
     console.error("[ERROR]", {
       message: err?.message,
