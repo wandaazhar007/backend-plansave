@@ -6,6 +6,8 @@ import transactionsRoutes from "./transactions.routes.js";
 import budgetsRoutes from "./budgets.routes.js";
 import analyticsRoutes from "./analytics.routes.js";
 import exportRoutes from "./export.routes.js";
+import recurringRoutes from "./recurring.routes.js";
+import alertsRoutes from "./alerts.routes.js";
 
 const router = Router();
 
@@ -15,6 +17,8 @@ router.use("/", transactionsRoutes);
 router.use("/", budgetsRoutes);
 router.use("/", analyticsRoutes);
 router.use("/", exportRoutes);
+router.use("/", recurringRoutes);
+router.use("/", alertsRoutes);
 
 router.use("/admin", adminRoutes);
 
