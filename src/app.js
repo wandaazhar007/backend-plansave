@@ -40,7 +40,13 @@ app.use(cors(buildCorsOptions(env)));
 // Body parsing (masih aman untuk Step 1)
 app.use(express.json({ limit: "200kb" }));
 app.use(express.urlencoded({ extended: true, limit: "200kb" }));
-
+app.use(
+  cors({
+    origin: ["http://localhost:5173", "https://app.plansave.com"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 // Rate limiting global
 app.use(
   rateLimit({

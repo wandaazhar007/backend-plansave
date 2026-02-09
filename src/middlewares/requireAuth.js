@@ -1,3 +1,4 @@
+//src/middlewares/requireAuth.js
 import { initFirebaseAdmin } from "../config/firebaseAdmin.js";
 import { fail } from "../utils/apiResponse.js";
 
