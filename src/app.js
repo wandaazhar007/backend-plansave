@@ -1,3 +1,4 @@
+// src/app.js
 import express from "express";
 import helmet from "helmet";
 import cors from "cors";
@@ -34,19 +35,30 @@ app.use(
 // Security headers
 app.use(helmet());
 
-// CORS allowlist
-app.use(cors(buildCorsOptions(env)));
+// ✅ CORS allowlist (single source of truth)
+// IMPORTANT:
+// - kalau env.CORS_ALLOWLIST kosong, di local dev akan selalu kena CORS_NOT_ALLOWED.
+// - jadi kita kasih default aman utk dev & production app domain.
+const resolvedEnv = {
+  ...env,
+  CORS_ALLOWLIST:
+    (env.CORS_ALLOWLIST && String(env.CORS_ALLOWLIST).trim()) ||
+    "http://localhost:5173,https://app.plansave.com",
+};
+
+const corsOptions = buildCorsOptions(resolvedEnv);
+
+// CORS middleware
+app.use(cors(corsOptions));
+
+// ✅ Preflight (OPTIONS) handler
+// Jangan pakai "*" (bisa error di path-to-regexp). Pakai regex agar kompatibel.
+app.options(/.*/, cors(corsOptions));
 
 // Body parsing (masih aman untuk Step 1)
 app.use(express.json({ limit: "200kb" }));
 app.use(express.urlencoded({ extended: true, limit: "200kb" }));
-app.use(
-  cors({
-    origin: ["http://localhost:5173", "https://app.plansave.com"],
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
+
 // Rate limiting global
 app.use(
   rateLimit({

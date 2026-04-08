@@ -1,14 +1,21 @@
 export function buildCorsOptions(env) {
+  const raw = String(env.CORS_ALLOWLIST || "").trim();
+
+  // Default allowlist utk dev kalau env belum diisi
+  const defaults =
+    env.NODE_ENV === "production"
+      ? ["https://app.plansave.com"]
+      : ["http://localhost:5173", "http://127.0.0.1:5173"];
+
   const allowlist = new Set(
-    String(env.CORS_ALLOWLIST || "")
-      .split(",")
+    (raw ? raw.split(",") : defaults)
       .map((s) => s.trim())
       .filter(Boolean)
   );
 
   return {
     origin(origin, callback) {
-      // Allow non-browser clients (curl, Postman) yang biasanya tidak kirim Origin
+      // Allow non-browser clients (curl, Postman)
       if (!origin) return callback(null, true);
 
       if (allowlist.has(origin)) return callback(null, true);
@@ -19,5 +26,6 @@ export function buildCorsOptions(env) {
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Request-Id"],
     exposedHeaders: ["X-Request-Id"],
+    optionsSuccessStatus: 204,
   };
 }

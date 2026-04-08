@@ -1,3 +1,4 @@
+//app/validators/transactions.schema.js
 import { z } from "zod";
 import { sanitizeText } from "../utils/sanitize.js";
 
@@ -15,8 +16,8 @@ export const createTransactionSchema = z
     category: z
       .string()
       .transform((v) => sanitizeText(v, { maxLen: 60 }) || "")
-      .refine((v) => v.length >= 1, "category wajib diisi")
-      .refine((v) => v.length <= 60, "category maksimal 60 karakter"),
+      .refine((v) => v.length >= 1, "category is required")
+      .refine((v) => v.length <= 60, "category maximum 60 characters"),
     isDialysisRelated: z.coerce.boolean().default(false),
     date: isoDateSchema,
     note: z
